@@ -1,13 +1,16 @@
-Gem::Specification.new do |s|
-  s.name = "server"
-  s.version = "0.0.2"
-  s.date = "2014-02-22"
-  s.summary = "Manage servers in a really awesome way. Like a boss."
-  s.authors = ["Pierce Moore"]
-  s.email = "me@prex.io"
-  s.files = Dir.glob("lib/**/*") + %w{LICENSE README.md}
-  s.homepage = "http://rubygems.org/gems/server"
-  s.metadata = { "github" => "https://github.com/rex/server-gem" }
-  s.license = "MIT"
-  s.executables = ['server']
+Gem::Specification.new do |gem|
+  gem.name = "server"
+  gem.version = "0.0.4"
+  gem.date = "2014-02-22"
+  gem.summary = "Manage servers in a really awesome way. Like a boss. NOTE: This doesn't do much of anything yet. In a few days I should have a much more awesome feature set live."
+  gem.description = "This gem is a work in progress that will soon allow for much easier management of servers and performance of various server administration tasks."
+  gem.authors = ["Pierce Moore"]
+  gem.email = "me@prex.io"
+  gem.files = Dir.glob("lib/**/*") + %w{LICENSE README.md}
+  gem.homepage = "http://rubygems.org/gems/server"
+  gem.metadata = { "github" => "https://github.com/rex/server-gem" }
+  gem.license = "MIT"
+  gem.executables = ['server']
+  gem.add_dependency 'thor', '~> 0'
+  gem.add_dependency 'highline', '~> 0'
 end
