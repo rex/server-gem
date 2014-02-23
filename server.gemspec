@@ -11,6 +11,5 @@ Gem::Specification.new do |gem|
   gem.metadata = { "github" => "https://github.com/rex/server-gem" }
   gem.license = "MIT"
   gem.executables = ['server']
-  gem.add_dependency 'thor', '~> 0'
-  gem.add_dependency 'highline', '~> 0'
+  gem.required_ruby_version = '>= 1.9.3'
 end

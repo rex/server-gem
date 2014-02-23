@@ -1,5 +1,8 @@
-server-gem [![Gem Version](https://badge.fury.io/rb/server.png)](http://badge.fury.io/rb/server)
+server-gem
 ==========
+
+[![Coverage Status](https://coveralls.io/repos/rex/server-gem/badge.png)](https://coveralls.io/r/rex/server-gem)
+[![Gem Version](https://badge.fury.io/rb/server.png)](http://badge.fury.io/rb/server)
 
 Manage servers in a really awesome way. Like a boss.
 
