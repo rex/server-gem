@@ -16,6 +16,7 @@ module Server
     class_option :info, :type => :boolean, :aliases => "-v", :desc => "Enable info logging"
     class_option :verbose, :type => :boolean, :aliases => "-vv", :desc => "Enable verbose logging"
     class_option :quiet, :type => :boolean, :aliases => "-q", :desc => "Silence all non-error logging"
+    class_option :expanded, :type => :boolean, :aliases => "-e", :desc => "Make logging output more roomy and easy to read"
 
     no_commands do
       def self.explain

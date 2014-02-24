@@ -6,23 +6,14 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 require 'server/colorizer' # Bring in our string colors
 require 'server/log' # Initialize our logs
-
-$Log.debug("libdir > #{libdir}")
+require 'server/signals' # Initialize our signal listeners
 
 $Log.debug("ARGV: #{ARGV}")
-
-Signal.trap("INT") { exit 1 }
 
 require 'server'
 
 Server.init
 
-$Log.debug( "Server runtime path: #{Server.runtime_path}" )
-
-$Log.debug( 'Requiring CLI' )
 require 'server/cli'
 
-$Log.debug( "Running server" )
-
 Server::CLI.start(ARGV)
-# Server::CLI.explain

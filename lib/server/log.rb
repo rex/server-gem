@@ -19,7 +19,11 @@ $Log.formatter = proc do |severity, datetime, progname, msg|
       prompt = "✓ ".blue
   end
 
-  "#{prompt} #{msg.strip} \n"
+  if ARGV.include? "-e"
+    "#{prompt} #{datetime.strftime("%Y/%m/%d %H:%M:%S")} \n » #{msg.strip} \n\n"
+  else
+    "#{prompt} #{msg.strip} \n"
+  end
 end
 
 # $Log.debug("This is a debug message")
