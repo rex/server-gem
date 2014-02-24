@@ -10,6 +10,8 @@ require 'server/signals' # Initialize our signal listeners
 
 $Log.debug("ARGV: #{ARGV}")
 
+$Log.debug("$LOAD_PATH > #{$LOAD_PATH}")
+
 require 'server'
 
 Server.init

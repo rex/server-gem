@@ -3,8 +3,9 @@ source "http://rubygems.org"
 # Add dependencies required to use your gem here.
 # Example:
 #   gem "activesupport", ">= 2.3.5"
-gem "thor", ">= 0.17.0"
-gem "highline", ">= 1.5.0"
+gem "thor", ">= 0.17.1"
+gem "highline", ">= 1.5.1"
+gem "mustache", "~> 0.99.4"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.

@@ -17,6 +17,7 @@ module Server
     class_option :verbose, :type => :boolean, :aliases => "-vv", :desc => "Enable verbose logging"
     class_option :quiet, :type => :boolean, :aliases => "-q", :desc => "Silence all non-error logging"
     class_option :expanded, :type => :boolean, :aliases => "-e", :desc => "Make logging output more roomy and easy to read"
+    class_option :reset, :type => :boolean, :aliases => "--delete-config", :desc => "Performs a hard reset on the server config file"
 
     no_commands do
       def self.explain
