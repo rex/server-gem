@@ -1,7 +1,28 @@
 #!/usr/bin/env ruby
 
+# Update our load path to make loading internal files easier
+libdir = File.expand_path('../lib/', File.dirname( __FILE__ ) )
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
+require 'server/colorizer' # Bring in our string colors
+require 'server/log' # Initialize our logs
+
+$Log.debug("libdir > #{libdir}")
+
+$Log.debug("ARGV: #{ARGV}")
+
 Signal.trap("INT") { exit 1 }
 
 require 'server'
 
-# Server.start(ARGV)
+Server.init
+
+$Log.debug( "Server runtime path: #{Server.runtime_path}" )
+
+$Log.debug( 'Requiring CLI' )
+require 'server/cli'
+
+$Log.debug( "Running server" )
+
+Server::CLI.start(ARGV)
+# Server::CLI.explain

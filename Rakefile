@@ -22,6 +22,8 @@ Jeweler::Tasks.new do |gem|
   gem.description = "PRE-ALPHA RELEASE! This gem is a work in progress that will soon allow for much easier management of servers and performance of various server administration tasks."
   gem.email = "me@prex.io"
   gem.authors = ["Pierce Moore"]
+  gem.required_ruby_version = '>= 1.9.3'
+  gem.require_paths = ["lib"]
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
