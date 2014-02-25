@@ -1,106 +1,142 @@
 require 'pathname'
 require 'fileutils'
-require 'yaml'
+require 'json'
+require 'terminal-table'
 
 module Server
 
   class Conf
     attr_reader :okay
+    attr_accessor :config
 
-    def self.init
-      self.check_permissions
+    def initialize(opts)
+      configure! if ARGV.include?('--delete-config') || !paths[:config].exist?
 
       # Check whether we're able to properly interact with the config
       @okay = true
-      @okay = false if !self.configure!
-      @okay = false if !self.paths[:sys_dir].writable?
-      @okay = false if !self.paths[:app_dir].writable?
-      @okay = false if !self.paths[:config].writable?
+      @okay = false if !paths[:sys_dir].writable?
+      @okay = false if !paths[:app_dir].writable?
+      @okay = false if !paths[:config].writable?
 
       @okay ? $Log.info("Environment ready to configure") : $Log.error("Unable to configure environment")
 
+      check_permissions
+
       # Now create necessary files
-      self.create! if !self.paths[:config].exist?
+      create! if !paths[:config].exist?
     end
 
-    def self.paths
+    def paths
       {
         :config => Pathname.new(Server.config_path),
-        :sys_dir => Pathname.new(Server.dir_sys),
-        :app_dir => Pathname.new(Server.dir_app)
+        :sys_dir => Pathname.new(Server.sys_dir),
+        :app_dir => Pathname.new(Server.app_dir)
       }
     end
 
-    def self.check_permissions
+    def check_permissions
       $Log.debug("Checking permissions for config module")
-      self.paths.each do |name, path|
-        path.exist? ? $Log.info("#{name} (#{path}) exists") : $Log.warn("#{name} (#{path}) does not exist")
-        path.readable? ? $Log.info("#{name} (#{path}) is readable") : $Log.warn("#{name} (#{path}) is not readable")
-        path.writable? ? $Log.info("#{name} (#{path}) is writable") : $Log.warn("#{name} (#{path}) is not writable")
+      rows = []
+      paths.each do |name, path|
+        path.exist? ? exists = '✓'.green : exists = '✖'.red
+        path.readable? ? readable = '✓'.green : readable = '✖'.red
+        path.writable? ? writable = '✓'.green : writable = '✖'.red
+
+        rows << [name, path, exists, readable, writable]
+
+        # msg = "#{name} (#{path}): "
+        # path.exist? ? msg = "#{msg}#{'exists ✓'.green}" : msg = "#{msg}#{'exists ✖'.red}"
+        # path.readable? ? msg = "#{msg}#{', readable ✓'.green}" : msg = "#{msg}#{', readable ✖'.red}"
+        # path.writable? ? msg = "#{msg}#{', writable ✓'.green}" : msg = "#{msg}#{', writable ✖'.red}"
+        # $Log.info(msg)
       end
+
+      table = Terminal::Table.new :title => "File Permissions", :headings => ['name', 'path', 'exists?', 'readable?', 'writable?'], :alignment => :center, :rows => rows
+      puts table
     end
 
-    def self.configure!
-      self.delete! if ARGV.include?('--delete-config')
+    def configure!
+      delete! if ARGV.include?('--delete-config')
 
       $Log.info("Configuring file/folder paths")
-      $Log.debug("Making sys_dir writable")
-      FileUtils.chmod("u=wrx,go=rx", self.paths[:sys_dir]) if !self.paths[:sys_dir].exist?
-      $Log.debug("Creating app_dir")
-      FileUtils.mkdir(self.paths[:app_dir], :mode => 0755) if !self.paths[:app_dir].exist?
-      $Log.debug("Making app_dir writable")
-      FileUtils.chmod("u=wrx,go=rx", self.paths[:app_dir]) if !self.paths[:app_dir].writable?
-      $Log.debug("Creating config file")
-      FileUtils.touch(self.paths[:config]) if !self.paths[:config].exist?
+
+      Step.start("Making sys_dir writable")
+      FileUtils.chmod("u=wrx,go=rx", paths[:sys_dir]) if !paths[:sys_dir].exist?
+      Step.complete()
+
+      Step.start("Creating app_dir")
+      FileUtils.mkdir(paths[:app_dir], :mode => 0755) if !paths[:app_dir].exist?
+      Step.complete()
+
+      Step.start("Making app_dir writable")
+      FileUtils.chmod("u=wrx,go=rx", paths[:app_dir]) if !paths[:app_dir].writable?
+      Step.complete()
 
       # Now let's see if the config file is blank. If so, it's the first
       # run and we need to create and store it.
-      $Log.debug("Creating base YAML config if need be")
-      puts("Config file: #{self.read}")
-      self.create! if self.read == false
+      $Log.debug("Creating base JSON config if need be")
+      create! if !read
 
-      $Log.debug("Config file: #{self.read}")
-      $Log.debug("Raw config file: #{File.read(self.paths[:config])}")
+      # $Log.debug("Config file: #{read}")
+      # $Log.debug("Raw config file: #{File.read(paths[:config])}")
 
       return true
     end
 
-    def self.read
+    def read
+
+      $Log.debug("Parsing config file: #{paths[:config]}")
       config = begin
-        YAML.load( File.open(self.paths[:config]) ) if self.paths[:config].exist?
-      rescue ArgumentError => e
+        if paths[:config].exist? && File.size?(paths[:config])
+          Logger.debug("File exists and has size: #{File.size?(paths[:config])}")
+          json = File.read(paths[:config])
+          JSON.parse(json) if json != ""
+        else
+          $Log.fatal("Can't read config.json... Did you break something?")
+          return false
+        end
+      rescue JSON::ParserError, TypeError => e
         $Log.error("Could not parse config file: #{e.message}")
+        $Log.error(e.backtrace)
       end
     end
 
-    def self.write!(config)
-      $Log.debug("Writing config: #{config}")
-      if !config.respond_to?("to_yaml")
-        $Log.error("Unable to convert configuration to YAML. Is the gem installed?")
+    def write!(config)
+      # $Log.debug("Writing config: #{config}")
+      if !config.respond_to?("to_json")
+        $Log.error("Unable to convert configuration to JSON. Is the gem installed?")
         return false
       else
-        File.open(self.paths[:config], "w") do |f|
-          f.write(config.to_yaml)
+        File.open(paths[:config], "w") do |f|
+          f.write(config.to_json)
         end
       end
     end
 
-    def self.get(item)
+    def get(item)
       #
     end
 
-    def self.create!
-      $Log.info("Creating server-gem config file")
-      self.write!({ :package => "server", :name => "Pierce", :thingy => "Other thingy!" })
+    def update(opts)
+      #
     end
 
-    def self.delete!
-      # $Log.info("Removing #{self.paths[:app_dir]}")
-      # FileUtils.remove_dir(self.paths[:app_dir]) if self.paths[:app_dir].exist?
-      $Log.info("Deleting existing config: #{self.paths[:config]}")
-      FileUtils.rm(self.paths[:config]) if self.paths[:config].exist?
+    def create!
+      $Log.info("Creating server-gem config file")
+      config = {}
 
-      $Log.debug("New config: #{self.read}")
+      [:packages, :sys, :installed, :conf, :history, :info, :log, :signals, :vim, :ssh, :cron, :build].each do |key|
+        config[key] = {}
+      end
+
+      write!(config)
+    end
+
+    def delete!
+      Step.start("Deleting existing config: #{paths[:config]}")
+      FileUtils.rm(paths[:config]) if paths[:config].exist?
+
+      paths[:config].exist? ? Step.fail("Failed to delete config file") : Step.complete
     end
 
   end

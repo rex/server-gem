@@ -26,7 +26,7 @@ module Server
     end
 
     def self.sysdir_writable?
-      sysdir = Pathname.new(Server.dir_sys)
+      sysdir = Pathname.new(Server.sys_dir)
 
       $Log.info("#{sysdir} is writable") if sysdir.writable?
       $Log.fatal("#{sysdir} is not writable!") if !sysdir.writable?

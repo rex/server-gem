@@ -7,10 +7,11 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 require 'server/colorizer' # Bring in our string colors
 require 'server/log' # Initialize our logs
 require 'server/signals' # Initialize our signal listeners
+require 'server/step' # Our convenient step helper
 
 $Log.debug("ARGV: #{ARGV}")
 
-$Log.debug("$LOAD_PATH > #{$LOAD_PATH}")
+# $Log.debug("$LOAD_PATH > #{$LOAD_PATH}")
 
 require 'server'
 
