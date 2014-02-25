@@ -1,0 +1,7 @@
+Nginx configuration file by {{name}}!
+
+SERVERS:
+
+{{#servers}}
+  IP Address: {{ip}}, Hostname: {{hostname}}, Nickname: {{nickname}}
+{{/servers}}

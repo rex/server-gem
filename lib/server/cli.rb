@@ -7,7 +7,8 @@ require 'highline/import'
 # require 'server/sys'
 # require 'server/workflows/web'
 # require 'server/workflows/db'
-require 'server'
+require 'server/packages/nginx'
+require 'server/packages/phpfpm'
 
 module Server
 
@@ -40,7 +41,12 @@ module Server
 
     desc "install", "Installs and configures packages"
     def install
-      $Log.info( "Installing" )
+      choose do |menu|
+        menu.prompt = "What package do you want to install?"
+
+        menu.choice(:nginx) { Server::Packages::Nginx.install! }
+        menu.choice(:phpfpm) { Server::Packages::PHPFPM.install! }
+      end
     end
 
     desc "configure", "Change the configuration of an existing package"
