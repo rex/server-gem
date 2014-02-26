@@ -1,34 +1,66 @@
+# encoding: utf-8
+
 require 'logger'
+require 'server/colorizer'
 
-$Log = Logger.new(STDOUT)
-$Log.datetime_format = '%Y-%m-%d %H:%M:%S'
-$Log.formatter = proc do |severity, datetime, progname, msg|
-  # "#{datetime.strftime("%m/%d %H:%M")}: #{msg} [#{severity}] \n"
-  case severity.downcase
-    when "debug"
-      prompt = "☰ ".blue
-    when "info"
-      prompt = "i ".green
-    when "warn"
-      prompt = "⚑ ".magenta
-    when "error"
-      prompt = "⁢⁢⁢⁢⁢⁢✖ ".red
-    when "fatal"
-      prompt = ":( ".red
-    else
-      prompt = "✓ ".blue
+module Server
+
+  class Log
+
+    def initialize(output_stream)
+      @instance = Logger.new(output_stream)
+
+      format_date
+      set_prompts
+      return @instance
+    end
+
+    def format_date(format = '%Y-%m-%d %H:%M:%S')
+      @instance.datetime_format = format
+    end
+
+    def set_prompts
+      @instance.formatter = proc do |severity, datetime, progname, msg|
+        case severity.downcase
+          when "debug"
+            prompt = "☰ ".blue
+          when "info"
+            prompt = "i ".green
+          when "warn"
+            prompt = "⚑ ".magenta
+          when "error"
+            prompt = "⁢⁢⁢⁢⁢⁢✖ ".red
+          when "fatal"
+            prompt = ":( ".red
+          else
+            prompt = "✓ ".blue
+        end
+
+        ( ARGV.include? "-e" ) ? "#{prompt} #{datetime.strftime("%Y/%m/%d %H:%M:%S")} \n » #{msg.strip} \n\n" : "#{prompt} #{msg.strip} \n"
+      end
+    end
+
+    def debug(msg)
+      text = @instance.debug(msg)
+      puts "Debug text? #{text}"
+    end
+
+    def info(msg)
+      @instance.info(msg)
+    end
+
+    def warn(msg)
+      @instance.warn(msg)
+    end
+
+    def error(msg)
+      @instance.error(msg)
+    end
+
+    def fatal(msg)
+      @instance.fatal(msg)
+    end
+
   end
 
-  if ARGV.include? "-e"
-    "#{prompt} #{datetime.strftime("%Y/%m/%d %H:%M:%S")} \n » #{msg.strip} \n\n"
-  else
-    "#{prompt} #{msg.strip} \n"
-  end
 end
-
-# $Log.debug("This is a debug message")
-# $Log.info("This is an info message")
-# $Log.warn("This is a warning message")
-# $Log.error("This is an error message")
-# $Log.fatal("This is a fatal message")
-# $Log.error("Some error here")

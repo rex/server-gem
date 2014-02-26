@@ -4,8 +4,9 @@
 libdir = File.expand_path('../lib/', File.dirname( __FILE__ ) )
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-require 'server/colorizer' # Bring in our string colors
 require 'server/log' # Initialize our logs
+$Log = Server::Log.new(STDOUT)
+
 require 'server/signals' # Initialize our signal listeners
 require 'server/step' # Our convenient step helper
 
