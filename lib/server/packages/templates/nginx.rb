@@ -7,7 +7,6 @@ module Server
     class Nginx < Mustache
 
       self.template_file = "#{Server.template_path}/nginx.conf.template"
-      # self.template_file = "./raw/nginx.conf.template"
 
       def servers
         [

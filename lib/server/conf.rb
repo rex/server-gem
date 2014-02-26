@@ -38,9 +38,11 @@ module Server
       $Log.debug("Checking permissions for config module")
       rows = []
       paths.each do |name, path|
-        path.exist? ? exists = '✓'.green : exists = '✖'.red
-        path.readable? ? readable = '✓'.green : readable = '✖'.red
-        path.writable? ? writable = '✓'.green : writable = '✖'.red
+        good = "✓".green
+        bad = "✖".red
+        exists = path.exist? ? good : bad
+        readable = path.readable? ? good : bad
+        writable = path.writable? ? good : bad
 
         rows << [name, path, exists, readable, writable]
 
