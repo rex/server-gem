@@ -61,6 +61,10 @@ module Server
       @instance.fatal(msg)
     end
 
+    def add(severity, msg)
+      @instance.add(severity, msg)
+    end
+
   end
 
 end

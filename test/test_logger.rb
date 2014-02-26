@@ -28,6 +28,10 @@ class TestLogger < Test::Unit::TestCase
       @logger.fatal("This is a fatal message")
     end
 
+    should "log a message with an unknown severity" do
+      @logger.add(5, "This message has an unknown severity")
+    end
+
   end
 
 end
