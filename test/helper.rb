@@ -1,8 +1,7 @@
 require 'simplecov'
 require 'coveralls'
 
-Coveralls.wear!
-
+=begin
 module SimpleCov::Configuration
   def clean_filters
     @filters = []
@@ -17,6 +16,8 @@ end
 ENV["COVERAGE"] && SimpleCov.start do
   add_filter "/.rvm/"
 end
+=end
+
 require 'rubygems'
 require 'bundler'
 begin
@@ -28,6 +29,17 @@ rescue Bundler::BundlerError => e
 end
 require 'test/unit'
 require 'shoulda'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+
+ENV["COVERAGE"] && SimpleCov.start do
+  add_filter "/.rvm/"
+end
+
+Coveralls.wear!
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
