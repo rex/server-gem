@@ -4,6 +4,7 @@ require 'server/log'
 class TestLogger < Test::Unit::TestCase
 
   context "Logger" do
+
     setup do
       @logger = Server::Log.new(StringIO.new)
     end
