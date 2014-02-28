@@ -4,7 +4,6 @@ module Helpers
     attr_reader :pkg_root
 
     def initialize
-      raise "No RubyGems API key found in environment!" if !ENV['RUBYGEMS_API_KEY']
       @api_key = ENV['RUBYGEMS_API_KEY']
       @pkg_prefix = "server-"
       @pkg_root = File.expand_path('../../pkg/', __FILE__)
