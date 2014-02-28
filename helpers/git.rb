@@ -39,7 +39,11 @@ module Helpers
     end
 
     def autotag!
-      `git tag -a v#{@version} -m '#{@release_type} release, version #{@version}'`
+      if [:minor, :major].include? @release_type
+        `git tag -a v#{@version} -m '#{@release_type} release, version #{@version}'`
+      else
+        puts "Not a minor or major release. Avoiding tag.".cyan
+      end
     end
 
     def add_all
