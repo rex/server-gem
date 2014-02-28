@@ -51,6 +51,14 @@ Version = Helpers::Version.new
 GitHelper = Helpers::Git.new
 RubyGem = Helpers::RubyGem.new
 
+task :commit, [:message] do |t, args|
+  # puts "Commit message: #{args[:message]}"
+  Version.bump(:build)
+  GitHelper.add_all
+  GitHelper.commit_with_message args[:message]
+  GitHelper.push!
+end
+
 namespace :deploy do
   desc "Git stuff"
   task :git do

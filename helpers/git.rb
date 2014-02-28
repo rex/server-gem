@@ -54,6 +54,10 @@ module Helpers
       `git commit -m '#{@release_type} release, version #{@version}'`
     end
 
+    def commit_with_message(message)
+      `git commit -m '#{message}'`
+    end
+
     def push!
       `git push #{@remote} #{@branch}`
       `git push --tags`
