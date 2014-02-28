@@ -40,6 +40,7 @@ module Helpers
         `gem push #{@pkg_path}`
       else
         puts "Not logged into RubyGems.org, skipping deploy!"
+      end
     end
   end
 end
