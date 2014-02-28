@@ -26,8 +26,8 @@ module Helpers
       "#{@pkg_prefix}#{@version}.gem"
     end
 
-    def curl_enabled?
-      `which curl`.strip != ""
+    def logged_in?
+      File.exists?(File.expand_path('~/.gem/credentials'))
     end
 
     def build!
@@ -35,11 +35,11 @@ module Helpers
     end
 
     def deploy!
-      raise "CURL needs to be enabled to push built gems!" if !curl_enabled?
-      puts "Uploading gem v#{@version} [#{pkg_path}]".red
-      `curl --data-binary @#{pkg_path} \
-        -H 'Authorization:#{@api_key}' \
-        https://rubygems.org/api/v1/gems`
+      if logged_in?
+        puts "Uploading gem v#{@version} [#{pkg_path}]".green
+        `gem push #{@pkg_path}`
+      else
+        puts "Not logged into RubyGems.org, skipping deploy!"
     end
   end
 end
