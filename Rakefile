@@ -42,40 +42,59 @@ task :simplecov do
   Rake::Task['test'].execute
 end
 
-namespace :version do
-  namespace :bump do
-    desc "Bumps build number, respecting major/minor/patch"
-    task :build do
-      raw_version = File.read("VERSION")
-      version = raw_version.strip.split('.')
-      puts "Version: #{version}"
+require_relative 'helpers/version'
+require_relative 'helpers/git'
+require_relative 'helpers/rubygem'
 
-      major, minor, patch, build = version[0].to_i, version[1].to_i, version[2].to_i, (version[3].to_i || 0)
+Version = Helpers::Version.new
+GitHelper = Helpers::Git.new
+RubyGem = Helpers::RubyGem.new
 
-      puts "Major: #{major}, minor: #{minor}, patch: #{patch}, build: #{build}"
+namespace :deploy do
+  desc "Git stuff"
+  task :git do
+    puts "Current branch is '#{GitHelper.current_branch?}'"
+    puts "Curl enabled? #{RubyGem.curl_enabled?}"
+    GitHelper.release_type = :patch
+    GitHelper.version = Version.to_s
+    RubyGem.version = Version.to_s
+    Version.explain
+    GitHelper.explain
+    RubyGem.explain
+  end
 
-      case ENV['TYPE']
-      when 'major'
-        major += 1
-        minor = 0
-        patch = 0
-      when 'minor'
-        minor += 1
-        patch = 0
-      when 'patch'
-        patch += 1
-      end
+  desc "Bump build number"
+  task :build => ['simplecov'] do
+    Version.bump(:build)
+  end
 
-      build += 1
+  desc "Release an patch version"
+  task :patch => ['simplecov'] do
+    Version.bump(:patch)
+    GitHelper.release_type = :patch
+    Rake::Task['deploy:go'].execute
+  end
 
-      ENV['MAJOR']=major.to_s
-      ENV['MINOR']=minor.to_s
-      ENV['PATCH']=patch.to_s
-      ENV['BUILD']=build.to_s
-      Rake::Task['version:write'].execute
+  desc "Release a minor version"
+  task :minor => ['simplecov'] do
+    Version.bump(:minor)
+    GitHelper.release_type = :minor
+    Rake::Task['deploy:go'].execute
+  end
 
-      Rake::Task['version'].execute
-    end
+  desc "Release a major version"
+  task :major => ['simplecov'] do
+    Version.bump(:major)
+    GitHelper.release_type = :major
+    Rake::Task['deploy:go'].execute
+  end
+
+  task :go do
+    Rake::Task['build'].execute
+    RubyGem.version = Version.to_s
+    RubyGem.deploy!
+    GitHelper.version = Version.to_s
+    GitHelper.deploy!
   end
 end
 
