@@ -36,7 +36,10 @@ module Helpers
 
     def deploy!
       raise "CURL needs to be enabled to push built gems!" if !curl_enabled?
-      `curl --data-binary @#{pkg_path} -H 'Authorization:#{@api_key}' https://rubygems.org/api/v1/gems`
+      puts "Uploading gem v#{@version} [#{pkg_path}]".red
+      `curl --data-binary @#{pkg_path} \
+        -H 'Authorization:#{@api_key}' \
+        https://rubygems.org/api/v1/gems`
     end
   end
 end
