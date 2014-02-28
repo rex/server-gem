@@ -65,7 +65,6 @@ namespace :version do
         patch += 1
       end
 
-      # Comment woooo
       build += 1
 
       ENV['MAJOR']=major.to_s
