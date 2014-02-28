@@ -37,7 +37,7 @@ module Helpers
     def deploy!
       if logged_in?
         puts "Uploading gem v#{@version} [#{pkg_path}]".green
-        `gem push #{@pkg_path}`
+        `gem push #{pkg_path}`
       else
         puts "Not logged into RubyGems.org, skipping deploy!"
       end
