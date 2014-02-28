@@ -15,7 +15,7 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "server"
-  gem.version = "0.0.4"
+  # gem.version = "0.0.4"
   gem.homepage = "http://github.com/rex/server-gem"
   gem.license = "MIT"
   gem.summary = "Manage servers in a really awesome way. Like a boss. NOTE: This doesn't do much of anything yet. In a few days I should have a much more awesome feature set live."
@@ -39,6 +39,43 @@ desc "Code coverage detail"
 task :simplecov do
   ENV['COVERAGE'] = "true"
   Rake::Task['test'].execute
+end
+
+namespace :version do
+  namespace :bump do
+    desc "Bumps build number, respecting major/minor/patch"
+    task :build do
+      raw_version = File.read("VERSION")
+      version = raw_version.strip.split('.')
+      puts "Version: #{version}"
+
+      major, minor, patch, build = version[0].to_i, version[1].to_i, version[2].to_i, (version[3].to_i || 0)
+
+      puts "Major: #{major}, minor: #{minor}, patch: #{patch}, build: #{build}"
+
+      case ENV['TYPE']
+      when 'major'
+        major += 1
+        minor = 0
+        patch = 0
+      when 'minor'
+        minor += 1
+        patch = 0
+      when 'patch'
+        patch += 1
+      end
+
+      build += 1
+
+      ENV['MAJOR']=major.to_s
+      ENV['MINOR']=minor.to_s
+      ENV['PATCH']=patch.to_s
+      ENV['BUILD']=build.to_s
+      Rake::Task['version:write'].execute
+
+      Rake::Task['version'].execute
+    end
+  end
 end
 
 task :default => :test
