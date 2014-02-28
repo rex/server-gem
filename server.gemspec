@@ -54,6 +54,7 @@ Gem::Specification.new do |s|
     "lib/server/sys.rb",
     "lib/server/workflows/db.rb",
     "lib/server/workflows/web.rb",
+    "server.gemspec",
     "test/helper.rb",
     "test/loader.rb",
     "test/test_logger.rb",
