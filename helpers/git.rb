@@ -38,7 +38,7 @@ module Helpers
       push!
     end
 
-    def autotag!(version)
+    def autotag!
       `git tag -a v#{@version} -m '#{@release_type} release, version #{@version}'`
     end
 
@@ -50,7 +50,7 @@ module Helpers
       `git commit -m '#{@release_type} release, version #{@version}'`
     end
 
-    def push!(opts = {})
+    def push!
       `git push #{@remote} #{@branch}`
       `git push --tags`
     end
