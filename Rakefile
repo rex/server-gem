@@ -1,5 +1,5 @@
 # encoding: utf-8
-# .
+# ..
 
 require_relative 'lib/server/colorizer'
 require 'rubygems'
